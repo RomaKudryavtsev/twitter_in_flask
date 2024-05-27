@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>twitter_manager</title>
+</head>
+
+<body>
+    <h3>Authenticated User Info</h3>
+    <p>Hello, <b>{{ res_info["username"] }}</b>! Thank you for authorization!</p>
+    <p><b>Followers Count:</b> {{ res_info["followers_count"]|string }}</p>
+    <p><b>Following Count:</b> {{ res_info["following_count"]|string }}</p>
+    <p>You have <b>{{ res_info["tweet_count"]|string }}</b> tweets!</p>
+</body>
+
+</html>

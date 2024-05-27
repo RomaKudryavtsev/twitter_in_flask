@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>twitter_manager</title>
+</head>
+
+<body>
+    <h3>Authentication Result</h3>
+    <p>OAuth Token: {{ res["oauth_token"] }}</p>
+    <p>OAuth Verifier: {{ res["oauth_verifier"] }}</p>
+    <p>User's Access Token: {{ res["access_token"] }}</p>
+    <p>User's Token Secret: {{ res["access_token_secret"] }}</p>
+    <a href="{{ url_for('info') }}">Reveal User Info</a>
+</body>
+
+</html>
