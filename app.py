@@ -69,17 +69,39 @@ def callback_url():
 def tweet_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
+    twitter_provider: TwitterApiProvider = g.twitter_provider
     if not access_token or not token_secret:
         return redirect("/")
     tweet_form = TweetSearchForm(request.form)
+    liked = False
+    retweeted = False
     if tweet_form.validate_on_submit():
         tweet_id = tweet_form.tweet_id.data
-        print(tweet_id)
+        liking_usernames = twitter_provider.get_tweet_likes(
+            tweet_id=tweet_id,
+            consumer_key=CONSUMER_API_KEY,
+            consumer_secret=CONSUMER_API_SECRET,
+            access_token=access_token,
+            access_token_secret=token_secret,
+        )
+        if current_username in liking_usernames:
+            liked = True
+        retweeters_usernames = twitter_provider.get_tweet_retweets(
+            tweet_id=tweet_id,
+            consumer_key=CONSUMER_API_KEY,
+            consumer_secret=CONSUMER_API_SECRET,
+            access_token=access_token,
+            access_token_secret=token_secret,
+        )
+        if current_username in retweeters_usernames:
+            retweeted = True
     return render_template(
         "form.html",
         is_tweet=True,
         form=tweet_form,
         current_username=current_username,
+        liked=liked,
+        retweeted=retweeted,
     )
 
 
@@ -88,7 +110,6 @@ def user_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
     twitter_provider: TwitterApiProvider = g.twitter_provider
-
     if not access_token or not token_secret:
         return redirect("/")
     user_form = AccountConnectionStatusForm(request.form)

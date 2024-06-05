@@ -1,5 +1,5 @@
 from tweepy import Client, Response
-from .model import TwitterUserInfo
+from .model import XUserInfo
 from dataclasses import asdict
 
 
@@ -23,7 +23,7 @@ class TwitterApiProvider:
         response: Response = client.get_me(user_fields=["public_metrics"])
         response_data = response.data
         return asdict(
-            TwitterUserInfo(
+            XUserInfo(
                 id=response_data["id"],
                 username=response_data["username"],
                 name=response_data["name"],
@@ -34,14 +34,7 @@ class TwitterApiProvider:
         )
 
     # From Twitter API:
-    # "connection_status": [
-    #            "follow_request_received",
-    #            "follow_request_sent",
-    #            "blocking",
-    #            "followed_by",
-    #            "following",
-    #            "muting"
-    # ]
+    # "connection_status": ["follow_request_received", "follow_request_sent", "blocking", "followed_by", "following", "muting"]
     def get_connection_status(
         self, username, consumer_key, consumer_secret, access_token, access_token_secret
     ):
@@ -56,9 +49,22 @@ class TwitterApiProvider:
         except KeyError:
             return "No Connection Between Users"
 
-    def get_tweet_likes_retweets(
+    def get_tweet_likes(
         self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
     ):
         client = self._get_client(
             consumer_key, consumer_secret, access_token, access_token_secret
         )
+        response: Response = client.get_liking_users(id=tweet_id, user_auth=True)
+        liking_usernames = [data["username"] for data in response.data]
+        return liking_usernames or []
+
+    def get_tweet_retweets(
+        self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
+    ):
+        client = self._get_client(
+            consumer_key, consumer_secret, access_token, access_token_secret
+        )
+        response: Response = client.get_retweeters(id=tweet_id, user_auth=True)
+        retweeters_usernames = [data["username"] for data in response.data]
+        return retweeters_usernames or []

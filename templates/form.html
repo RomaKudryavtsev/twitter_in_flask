@@ -1,42 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>twitter_manager</title>
-</head>
-
-<body>
-    <h3>Current User: {{ current_username }}</h3>
-    {% if is_tweet: %}
-    <form role="form" method="post" action="{{ url_for('tweet_lookup', current_username=current_username) }}"
-        novalidate>
-        {{ form.csrf_token }}
-        {{ form.tweet_id.label }}
-        {{ form.tweet_id }}
-        {% if form.tweet_id.errors: %}
-        <p>Required Field</p>
-        {% endif %}
-        {{ form.submit }}
-    </form>
-    <p>Current User Liked: </p>
-    <p>Current User Retweeted: </p>
-    {% else: %}
-    <form role="form" method="post" action="{{ url_for('user_lookup', current_username=current_username) }}" novalidate>
-        {{ form.csrf_token }}
-        {{ form.username.label }}
-        {{ form.username }}
-        {% if form.username.errors: %}
-        <p>Required Field</p>
-        {% endif %}
-        {{ form.submit }}
-    </form>
-    {% if connection_status: %}
-    <p>Connection Status with Current User: {{ connection_status }}</p>
+{% extends "_base.html" %}
+{% block content %}
+<h3>Current User: {{ current_username }}</h3>
+{% if is_tweet: %}
+<form role="form" method="post" action="{{ url_for('tweet_lookup', current_username=current_username) }}" novalidate>
+    {{ form.csrf_token }}
+    {{ form.tweet_id.label }}
+    {{ form.tweet_id }}
+    {% if form.tweet_id.errors: %}
+    <p>Required Field</p>
     {% endif %}
+    {{ form.submit }}
+</form>
+<p>Current User Liked: {{ liked|string }}</p>
+<p>Current User Retweeted: {{ retweeted|string }} </p>
+{% else: %}
+<form role="form" method="post" action="{{ url_for('user_lookup', current_username=current_username) }}" novalidate>
+    {{ form.csrf_token }}
+    {{ form.username.label }}
+    {{ form.username }}
+    {% if form.username.errors: %}
+    <p>Required Field</p>
     {% endif %}
-    <a href="{{ url_for('info') }}">Back to Authenticated User Info</a>
-</body>
-
-</html>
+    {{ form.submit }}
+</form>
+{% if connection_status: %}
+<p>Connection Status with Current User: {{ connection_status }}</p>
+{% endif %}
+{% endif %}
+<p><a href="{{ url_for('info') }}">Back to Authenticated User Info</a></p>
+{% endblock %}

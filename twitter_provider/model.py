@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class TwitterUserInfo:
+class XUserInfo:
     id: int
     username: str
     name: str
