@@ -5,6 +5,10 @@ from flask import Flask, request, g, redirect, render_template, session
 from twitter_provider import TwitterAuthHandler, TwitterApiProvider
 from form import TweetSearchForm, AccountConnectionStatusForm
 
+# TODO - implement TwitterParser to info similar to API (follows, likes, retweets)
+# TODO - implement tweets publication (based on pre-generated URL)
+# TODO - implement tweet search by user
+
 load_dotenv()
 # Below data is available via X Developer Profile
 CLIENT_ID = os.environ.get("CLIENT_ID")
