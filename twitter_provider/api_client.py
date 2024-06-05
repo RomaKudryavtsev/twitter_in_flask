@@ -44,10 +44,14 @@ class TwitterApiProvider:
         response: Response = client.get_user(
             username=username, user_fields=["connection_status"], user_auth=True
         )
-        try:
-            return response.data["connection_status"][0]
-        except KeyError:
-            return "No Connection Between Users"
+        if response and response.data:
+            try:
+                statuses = response.data["connection_status"]
+                return statuses[0] if statuses else "No Connection Between Users"
+            except KeyError:
+                return "No Connection Between Users"
+        else:
+            return "Unable to Get Data"
 
     def get_tweet_likes(
         self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
@@ -56,8 +60,11 @@ class TwitterApiProvider:
             consumer_key, consumer_secret, access_token, access_token_secret
         )
         response: Response = client.get_liking_users(id=tweet_id, user_auth=True)
-        liking_usernames = [data["username"] for data in response.data]
-        return liking_usernames or []
+        if response and response.data:
+            liking_usernames = [data["username"] for data in response.data]
+            return liking_usernames or []
+        else:
+            return []
 
     def get_tweet_retweets(
         self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
@@ -66,5 +73,8 @@ class TwitterApiProvider:
             consumer_key, consumer_secret, access_token, access_token_secret
         )
         response: Response = client.get_retweeters(id=tweet_id, user_auth=True)
-        retweeters_usernames = [data["username"] for data in response.data]
-        return retweeters_usernames or []
+        if response and response.data:
+            retweeters_usernames = [data["username"] for data in response.data]
+            return retweeters_usernames or []
+        else:
+            return []
