@@ -14,3 +14,6 @@ Simple example demonstrating X's 3-legged OAuth authentication with Flask
 - User visits the url and authorizes the app to read data from his X Account.
 - User is redirected to the app's callback url. At this moment the app receives in request params *oauth_token* and *oauth_verifier*. Based on these, **TwitterAuthHandler** will collect the **user's** *access_token* and *access_secret*, which can be stored for further requests to X API (in the example they are stored in Flask's session).
 - Based on the **user's** *access_token* and *access_secret*, **TwitterApiProvider** is able to retrieve data via X API.
+
+## Running locally
+Use `python app.py`
