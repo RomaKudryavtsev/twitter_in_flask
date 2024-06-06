@@ -3,7 +3,7 @@ from .model import XUserInfo
 from dataclasses import asdict
 
 
-class TwitterApiProvider:
+class XApiProvider:
     def _get_client(
         self, consumer_key, consumer_secret, access_token, access_token_secret
     ):

@@ -1,7 +1,7 @@
 from tweepy import OAuth1UserHandler
 
 
-class TwitterAuthHandler:
+class XApiAuthHandler:
     def __init__(self, consumer_api_key, consumer_api_secret, callback_url):
         self.auth_handler = OAuth1UserHandler(
             consumer_api_key, consumer_api_secret, callback=callback_url

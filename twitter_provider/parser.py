@@ -1,2 +1,0 @@
-class TwitterParser:
-    pass

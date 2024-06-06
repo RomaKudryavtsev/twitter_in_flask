@@ -2,7 +2,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from flask import Flask, request, g, redirect, render_template, session
-from twitter_provider import TwitterAuthHandler, TwitterApiProvider
+from twitter_provider import XApiAuthHandler, XApiProvider
 from form import TweetSearchForm, AccountConnectionStatusForm
 
 # TODO - implement TwitterParser to info similar to API (follows, likes, retweets)
@@ -24,12 +24,12 @@ APP_SECRET = os.environ.get("INTERNAL_APP_SECRET")
 
 app = Flask(__name__)
 app.secret_key = APP_SECRET
-twitter_auth_handler = TwitterAuthHandler(
+twitter_auth_handler = XApiAuthHandler(
     consumer_api_key=CONSUMER_API_KEY,
     consumer_api_secret=CONSUMER_API_SECRET,
     callback_url=CALLBACK_URL,
 )
-twitter_provider = TwitterApiProvider()
+twitter_provider = XApiProvider()
 
 
 @app.before_request
@@ -73,7 +73,7 @@ def callback_url():
 def tweet_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
-    twitter_provider: TwitterApiProvider = g.twitter_provider
+    twitter_provider: XApiProvider = g.twitter_provider
     if not access_token or not token_secret:
         return redirect("/")
     tweet_form = TweetSearchForm(request.form)
@@ -113,7 +113,7 @@ def tweet_lookup(current_username):
 def user_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
-    twitter_provider: TwitterApiProvider = g.twitter_provider
+    twitter_provider: XApiProvider = g.twitter_provider
     if not access_token or not token_secret:
         return redirect("/")
     user_form = AccountConnectionStatusForm(request.form)
@@ -143,7 +143,7 @@ def info():
     token_secret = session.get("token_secret")
     if not access_token or not token_secret:
         return redirect("/")
-    twitter_provider: TwitterApiProvider = g.twitter_provider
+    twitter_provider: XApiProvider = g.twitter_provider
     res_info = twitter_provider.get_user_info(
         consumer_key=CONSUMER_API_KEY,
         consumer_secret=CONSUMER_API_SECRET,

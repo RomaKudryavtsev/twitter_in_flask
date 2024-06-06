@@ -1,7 +1,9 @@
-from .api_client import TwitterApiProvider
-from .auth_handler import TwitterAuthHandler
+from .api_client import XApiProvider
+from .auth_handler import XApiAuthHandler
+from .scrapper import TwitterScrapper
 
 __all__ = (
-    "TwitterApiProvider",
-    "TwitterAuthHandler",
+    "XApiProvider",
+    "XApiAuthHandler",
+    "TwitterScrapper",
 )
