@@ -10,7 +10,7 @@ from .model import ClientUserInfo
 
 
 class ClientApiProvider:
-    def __init__(self, screen_name, screen_pwd):
+    def __init__(self, screen_name: str, screen_pwd: str, default_count: int = 1000):
         cookies_dict = dict()
         if Path("cookie.json").exists():
             with open("cookie.json", "r") as f:
@@ -29,6 +29,7 @@ class ClientApiProvider:
         self.user_api = client_api.get_user_api()
         self.user_list_api = client_api.get_user_list_api()
         self.tweet_api = client_api.get_tweet_api()
+        self.default_count = default_count
 
     def get_user_info_by_screen_name(self, screen_name: str):
         resp = self.user_api.get_user_by_screen_name(screen_name=screen_name)
@@ -40,27 +41,33 @@ class ClientApiProvider:
             )
         )
 
-    def get_user_following(self, target_screen_name: str):
+    def get_user_following(self, target_screen_name: str, count: int | None):
         target_user_id = self.get_user_info_by_screen_name(
             screen_name=target_screen_name
         )["id"]
-        resp = self.user_list_api.get_following(user_id=target_user_id)
+        resp = self.user_list_api.get_following(
+            user_id=target_user_id, count=count or self.default_count
+        )
         users_data = resp.data.data
         following_screen_names = []
         for user_data in users_data:
             following_screen_names.append(user_data.user.legacy.screen_name)
         return following_screen_names
 
-    def get_user_likes(self, user_id: str):
-        resp = self.tweet_api.get_likes(user_id=user_id)
+    def get_user_likes(self, user_id: str, count: int | None):
+        resp = self.tweet_api.get_likes(
+            user_id=user_id, count=count or self.default_count
+        )
         tweets_data = resp.data.data
         liked_tweets = []
         for tweet_data in tweets_data:
             liked_tweets.append(tweet_data.tweet.rest_id)
         return liked_tweets
 
-    def get_user_retweets(self, user_id):
-        resp = self.tweet_api.get_user_tweets_and_replies(user_id=user_id)
+    def get_user_retweets(self, user_id: str):
+        resp = self.tweet_api.get_user_tweets_and_replies(
+            user_id=user_id, count=self.default_count
+        )
         tweets_data = resp.data.data
         retweeted = []
         for tweet_data in tweets_data:

@@ -2,7 +2,7 @@
 {% block content %}
 <h3>Current User: {{ current_username }}</h3>
 {% if is_tweet: %}
-<form role="form" method="post" action="{{ url_for('tweet_lookup', current_username=current_username) }}" novalidate>
+<form role="form" method="post" action="{{ url_for('x_api.tweet_lookup', current_username=current_username) }}" novalidate>
     {{ form.csrf_token }}
     {{ form.tweet_id.label }}
     {{ form.tweet_id }}
@@ -14,7 +14,7 @@
 <p>Current User Liked: {{ liked|string }}</p>
 <p>Current User Retweeted: {{ retweeted|string }} </p>
 {% else: %}
-<form role="form" method="post" action="{{ url_for('user_lookup', current_username=current_username) }}" novalidate>
+<form role="form" method="post" action="{{ url_for('x_api.user_lookup', current_username=current_username) }}" novalidate>
     {{ form.csrf_token }}
     {{ form.username.label }}
     {{ form.username }}
@@ -27,5 +27,5 @@
 <p>Connection Status with Current User: {{ connection_status }}</p>
 {% endif %}
 {% endif %}
-<p><a href="{{ url_for('info') }}">Back to Authenticated User Info</a></p>
+<p><a href="{{ url_for('x_api.info') }}">Back to Authenticated User Info</a></p>
 {% endblock %}

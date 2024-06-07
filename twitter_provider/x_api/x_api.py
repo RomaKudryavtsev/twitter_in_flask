@@ -4,11 +4,11 @@ from dataclasses import asdict
 
 
 class XApiProvider:
-    def __init__(self, consumer_key, consumer_secret):
+    def __init__(self, consumer_key: str, consumer_secret: str):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
 
-    def _get_client(self, access_token, access_token_secret):
+    def _get_client(self, access_token: str, access_token_secret: str):
         return Client(
             consumer_key=self.consumer_key,
             consumer_secret=self.consumer_secret,
@@ -16,7 +16,7 @@ class XApiProvider:
             access_token_secret=access_token_secret,
         )
 
-    def get_user_me(self, access_token, access_token_secret):
+    def get_user_me(self, access_token: str, access_token_secret: str):
         client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_me(user_fields=["public_metrics"])
         response_data = response.data
@@ -33,7 +33,7 @@ class XApiProvider:
 
     # From X API:
     # "connection_status": ["follow_request_received", "follow_request_sent", "blocking", "followed_by", "following", "muting"]
-    def get_connection_status(self, username, access_token, access_token_secret):
+    def get_connection_status(self, username: str, access_token: str, access_token_secret: str):
         client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_user(
             username=username, user_fields=["connection_status"], user_auth=True
@@ -47,7 +47,7 @@ class XApiProvider:
         else:
             return "Unable to Get Data"
 
-    def get_tweet_likes(self, tweet_id, access_token, access_token_secret):
+    def get_tweet_likes(self, tweet_id: str, access_token: str, access_token_secret: str):
         client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_liking_users(id=tweet_id, user_auth=True)
         if response and response.data:
@@ -56,7 +56,7 @@ class XApiProvider:
         else:
             return []
 
-    def get_tweet_retweets(self, tweet_id, access_token, access_token_secret):
+    def get_tweet_retweets(self, tweet_id: str, access_token: str, access_token_secret: str):
         client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_retweeters(id=tweet_id, user_auth=True)
         if response and response.data:

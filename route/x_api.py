@@ -5,31 +5,16 @@ from config import config
 from twitter_provider import XApiAuthHandler, XApiProvider
 from form import TweetSearchForm, UserConnectionStatusForm
 
-x_api_bp = Blueprint("x_api", __name__, url_prefix="/x_api")
-x_auth_handler = XApiAuthHandler(
-    consumer_api_key=config.CONSUMER_API_KEY,
-    consumer_api_secret=config.CONSUMER_API_SECRET,
-    callback_url=config.CALLBACK_URL,
-)
-x_api_provider = XApiProvider(
-    consumer_key=config.CONSUMER_API_KEY,
-    consumer_secret=config.CONSUMER_API_SECRET,
-)
-
-
-@x_api_bp.before_request
-def before_request():
-    g.twitter_auth_handler = x_auth_handler
-    g.twitter_provider = x_api_provider
+x_api_bp = Blueprint("x_api", __name__)
 
 
 @x_api_bp.route("/")
 def home():
-    auth_handler = g.twitter_auth_handler
+    x_auth_handler = g.x_auth_handler
     try:
-        auth_url = auth_handler.get_user_auth_url()
+        auth_url = x_auth_handler.get_user_auth_url()
     except TweepyException:
-        g.twitter_auth_handler = XApiAuthHandler(
+        g.x_auth_handler = XApiAuthHandler(
             consumer_api_key=config.CONSUMER_API_KEY,
             consumer_api_secret=config.CONSUMER_API_SECRET,
             callback_url=config.CALLBACK_URL,
@@ -42,9 +27,9 @@ def home():
 def callback_url():
     oauth_token = request.args.get("oauth_token")
     oauth_verifier = request.args.get("oauth_verifier")
-    auth_handler = g.twitter_auth_handler
+    x_auth_handler = g.x_auth_handler
     try:
-        access_token, access_token_secret = auth_handler.get_user_auth_data(
+        access_token, access_token_secret = x_auth_handler.get_user_auth_data(
             oauth_verifier
         )
         res = {
@@ -65,7 +50,7 @@ def callback_url():
 def tweet_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
-    twitter_provider: XApiProvider = g.twitter_provider
+    x_api_provider: XApiProvider = g.x_api_provider
     if not access_token or not token_secret:
         return redirect("/")
     tweet_form = TweetSearchForm(request.form)
@@ -73,14 +58,14 @@ def tweet_lookup(current_username):
     retweeted = False
     if tweet_form.validate_on_submit():
         tweet_id = tweet_form.tweet_id.data
-        liking_usernames = twitter_provider.get_tweet_likes(
+        liking_usernames = x_api_provider.get_tweet_likes(
             tweet_id=tweet_id,
             access_token=access_token,
             access_token_secret=token_secret,
         )
         if current_username in liking_usernames:
             liked = True
-        retweeters_usernames = twitter_provider.get_tweet_retweets(
+        retweeters_usernames = x_api_provider.get_tweet_retweets(
             tweet_id=tweet_id,
             access_token=access_token,
             access_token_secret=token_secret,
@@ -101,7 +86,7 @@ def tweet_lookup(current_username):
 def user_lookup(current_username):
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
-    twitter_provider: XApiProvider = g.twitter_provider
+    x_api_provider: XApiProvider = g.x_api_provider
     if not access_token or not token_secret:
         return redirect("/")
     user_form = UserConnectionStatusForm(request.form)
@@ -109,7 +94,7 @@ def user_lookup(current_username):
     username = None
     if user_form.validate_on_submit():
         username = user_form.username.data
-        connection_status = twitter_provider.get_connection_status(
+        connection_status = x_api_provider.get_connection_status(
             username=username,
             access_token=access_token,
             access_token_secret=token_secret,
@@ -129,8 +114,8 @@ def info():
     token_secret = session.get("token_secret")
     if not access_token or not token_secret:
         return redirect("/")
-    twitter_provider: XApiProvider = g.twitter_provider
-    res_info = twitter_provider.get_user_me(
+    x_api_provider: XApiProvider = g.x_api_provider
+    res_info = x_api_provider.get_user_me(
         access_token=access_token,
         access_token_secret=token_secret,
     )
