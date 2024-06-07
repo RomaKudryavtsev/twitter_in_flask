@@ -1,7 +1,12 @@
 from tweepy_authlib import CookieSessionUserHandler
-from twitter_openapi_python import TwitterOpenapiPython, UserResults
+from twitter_openapi_python import (
+    ItemResult,
+    TwitterOpenapiPython,
+)
 from pathlib import Path
 import json
+from dataclasses import asdict
+from .model import ClientUserInfo
 
 
 class ClientApiProvider:
@@ -25,25 +30,47 @@ class ClientApiProvider:
         self.user_list_api = client_api.get_user_list_api()
         self.tweet_api = client_api.get_tweet_api()
 
-    def get_user_id_by_screen_name(self, screen_name: str):
+    def get_user_info_by_screen_name(self, screen_name: str):
         resp = self.user_api.get_user_by_screen_name(screen_name=screen_name)
-        user_res: UserResults = resp.data.data[0].raw
-        return user_res.to_dict()["result"]["legacy"]["rest_id"]
+        return asdict(
+            ClientUserInfo(
+                id=resp.data.user.rest_id,
+                name=resp.data.user.legacy.name,
+                followers_count=resp.data.user.legacy.followers_count,
+            )
+        )
 
     def get_user_following(self, target_screen_name: str):
-        target_user_id = self.get_user_id_by_screen_name(screen_name=target_screen_name)
+        target_user_id = self.get_user_info_by_screen_name(
+            screen_name=target_screen_name
+        )["id"]
         resp = self.user_list_api.get_following(user_id=target_user_id)
         users_data = resp.data.data
         following_screen_names = []
         for user_data in users_data:
-            user_res: UserResults = user_data.raw
-            following_screen_names.append(
-                user_res.to_dict()["result"]["legacy"]["screen_name"]
-            )
+            following_screen_names.append(user_data.user.legacy.screen_name)
         return following_screen_names
 
     def get_user_likes(self, user_id: str):
         resp = self.tweet_api.get_likes(user_id=user_id)
+        tweets_data = resp.data.data
+        liked_tweets = []
+        for tweet_data in tweets_data:
+            liked_tweets.append(tweet_data.tweet.rest_id)
+        return liked_tweets
 
-    def get_retweets(self, tweet_id):
-        resp = self.tweet_api.get_tweet_detail(focal_tweet_id=tweet_id)
+    def get_user_retweets(self, user_id):
+        resp = self.tweet_api.get_user_tweets_and_replies(user_id=user_id)
+        tweets_data = resp.data.data
+        retweeted = []
+        for tweet_data in tweets_data:
+            tweet_data_legacy = tweet_data.tweet.legacy
+            if (
+                tweet_data_legacy
+                and tweet_data_legacy.retweeted
+                and tweet_data_legacy.retweeted_status_result
+            ):
+                original_tweet: ItemResult = tweet_data_legacy.retweeted_status_result
+                origanal_tweet_id = original_tweet.to_dict()["result"]["rest_id"]
+                retweeted.append(origanal_tweet_id)
+        return retweeted
