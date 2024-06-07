@@ -1,9 +1,8 @@
-from .api_client import XApiProvider
-from .auth_handler import XApiAuthHandler
-from .scrapper import TwitterScrapper
+from .x_api import XApiProvider, XApiAuthHandler
+from .client_api import ClientApiProvider
 
 __all__ = (
     "XApiProvider",
     "XApiAuthHandler",
-    "TwitterScrapper",
+    "ClientApiProvider",
 )

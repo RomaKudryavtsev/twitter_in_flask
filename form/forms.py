@@ -8,6 +8,6 @@ class TweetSearchForm(FlaskForm):
     submit = SubmitField("Check Likes & Retweets by Authed User")
 
 
-class AccountConnectionStatusForm(FlaskForm):
+class UserConnectionStatusForm(FlaskForm):
     username = StringField("Target Username", validators=[DataRequired()])
     submit = SubmitField("Check Target User's Status with Authed User")

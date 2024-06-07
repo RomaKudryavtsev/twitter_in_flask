@@ -1,6 +1,6 @@
-from .forms import AccountConnectionStatusForm, TweetSearchForm
+from .forms import UserConnectionStatusForm, TweetSearchForm
 
 __all__ = (
-    "AccountConnectionStatusForm",
+    "UserConnectionStatusForm",
     "TweetSearchForm",
 )

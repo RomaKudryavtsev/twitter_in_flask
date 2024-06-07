@@ -4,22 +4,20 @@ from dataclasses import asdict
 
 
 class XApiProvider:
-    def _get_client(
-        self, consumer_key, consumer_secret, access_token, access_token_secret
-    ):
+    def __init__(self, consumer_key, consumer_secret):
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+
+    def _get_client(self, access_token, access_token_secret):
         return Client(
-            consumer_key=consumer_key,
-            consumer_secret=consumer_secret,
+            consumer_key=self.consumer_key,
+            consumer_secret=self.consumer_secret,
             access_token=access_token,
             access_token_secret=access_token_secret,
         )
 
-    def get_user_info(
-        self, consumer_key, consumer_secret, access_token, access_token_secret
-    ):
-        client = self._get_client(
-            consumer_key, consumer_secret, access_token, access_token_secret
-        )
+    def get_user_me(self, access_token, access_token_secret):
+        client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_me(user_fields=["public_metrics"])
         response_data = response.data
         return asdict(
@@ -33,14 +31,10 @@ class XApiProvider:
             )
         )
 
-    # From Twitter API:
+    # From X API:
     # "connection_status": ["follow_request_received", "follow_request_sent", "blocking", "followed_by", "following", "muting"]
-    def get_connection_status(
-        self, username, consumer_key, consumer_secret, access_token, access_token_secret
-    ):
-        client = self._get_client(
-            consumer_key, consumer_secret, access_token, access_token_secret
-        )
+    def get_connection_status(self, username, access_token, access_token_secret):
+        client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_user(
             username=username, user_fields=["connection_status"], user_auth=True
         )
@@ -53,12 +47,8 @@ class XApiProvider:
         else:
             return "Unable to Get Data"
 
-    def get_tweet_likes(
-        self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
-    ):
-        client = self._get_client(
-            consumer_key, consumer_secret, access_token, access_token_secret
-        )
+    def get_tweet_likes(self, tweet_id, access_token, access_token_secret):
+        client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_liking_users(id=tweet_id, user_auth=True)
         if response and response.data:
             liking_usernames = [data["username"] for data in response.data]
@@ -66,12 +56,8 @@ class XApiProvider:
         else:
             return []
 
-    def get_tweet_retweets(
-        self, tweet_id, consumer_key, consumer_secret, access_token, access_token_secret
-    ):
-        client = self._get_client(
-            consumer_key, consumer_secret, access_token, access_token_secret
-        )
+    def get_tweet_retweets(self, tweet_id, access_token, access_token_secret):
+        client = self._get_client(access_token, access_token_secret)
         response: Response = client.get_retweeters(id=tweet_id, user_auth=True)
         if response and response.data:
             retweeters_usernames = [data["username"] for data in response.data]
