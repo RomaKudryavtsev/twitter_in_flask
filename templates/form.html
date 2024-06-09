@@ -15,6 +15,19 @@
 </form>
 <p>Current User Liked: {{ liked|string }}</p>
 <p>Current User Retweeted: {{ retweeted|string }} </p>
+{% elif is_search: %}
+<form role="form" method="post"
+    action="{{ url_for('x_api.search_tweet', current_username=current_username, tweet_count=tweet_count) if not is_client_api else url_for('client_api.search_tweet', current_username=current_username, tweet_count=tweet_count) }}"
+    novalidate>
+    {{ form.csrf_token }}
+    {{ form.search_text.label }}
+    {{ form.search_text }}
+    {% if form.search_text.errors: %}
+    <p>Required Field</p>
+    {% endif %}
+    {{ form.submit }}
+</form>
+<p>Current User Published: {{ published|string }}</p>
 {% elif is_intent: %}
 <p>Ensure you are logged in to X: <a href="{{ x_login_url }}" target="_blank">{{ x_login_url }}</a></p>
 <form role="form" method="post" action="{{ url_for('intent.post_intent', current_username=current_username) }}"

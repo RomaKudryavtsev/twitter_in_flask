@@ -41,7 +41,7 @@ class ClientApiProvider:
             )
         )
 
-    def get_user_following(self, current_screen_name: str, count: int | None):
+    def get_user_following(self, current_screen_name: str, count: int | None = None):
         target_user_id = self.get_user_info_by_screen_name(
             screen_name=current_screen_name
         )["id"]
@@ -54,7 +54,20 @@ class ClientApiProvider:
             following_screen_names.append(user_data.user.legacy.screen_name)
         return following_screen_names
 
-    def get_user_likes(self, user_id: str, count: int | None):
+    def search_user_tweets(
+        self, search_text: str, user_id: str, count: int | None = None
+    ):
+        resp = self.tweet_api.get_user_tweets(
+            user_id=user_id, count=count or self.default_count
+        )
+        tweets_data = resp.data.data
+        return [
+            tweet.tweet.legacy.full_text
+            for tweet in tweets_data
+            if search_text in tweet.tweet.legacy.full_text
+        ]
+
+    def get_user_likes(self, user_id: str, count: int | None = None):
         resp = self.tweet_api.get_likes(
             user_id=user_id, count=count or self.default_count
         )

@@ -44,5 +44,17 @@
         <p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a>
         </p>
     </li>
+    <li>
+        <p><a
+                href="{{ url_for('x_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                if Tweet is Published via X API</a></p>
+    </li>
+    <li>
+        <p>
+            <a
+                href="{{ url_for('client_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                if Tweet is Published via Client API</a>
+        </p>
+    </li>
 </ul>
 {% endblock %}

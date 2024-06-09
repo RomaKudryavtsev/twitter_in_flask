@@ -3,11 +3,12 @@ from config import config
 from route import x_api_bp, client_api_bp, intent_bp
 from twitter_provider import XApiAuthHandler, XApiProvider, ClientApiProvider
 
-# TODO - implement tweets publication (based on pre-generated URL)
 # TODO - implement tweet search by user
+# TODO - add banner img retrieval
 
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET
+app.static_folder = "./static"
 app.register_blueprint(x_api_bp)
 app.register_blueprint(client_api_bp)
 app.register_blueprint(intent_bp)

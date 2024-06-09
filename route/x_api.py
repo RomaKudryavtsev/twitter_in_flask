@@ -4,7 +4,7 @@ from flask import Blueprint, g, request, session, render_template, redirect
 from tweepy import TweepyException
 from config import config
 from twitter_provider import XApiAuthHandler, XApiProvider
-from form import TweetSearchForm, UserConnectionStatusForm
+from form import TweetSearchForm, UserConnectionStatusForm, CheckTweetForm
 
 x_api_bp = Blueprint("x_api", __name__)
 
@@ -47,6 +47,43 @@ def callback_url():
         logging.warning(traceback.format_exc())
         logging.warning(str(e))
         return redirect("/")
+
+
+@x_api_bp.route("/search/<current_username>", methods=["GET", "POST"])
+def search_tweet(current_username):
+    access_token = session.get("access_token")
+    token_secret = session.get("token_secret")
+    x_api_provider: XApiProvider = g.x_api_provider
+    if not access_token or not token_secret:
+        return redirect("/")
+    tweet_count = int(request.args.get("tweet_count"))
+    tweet_form = CheckTweetForm(request.form)
+    published = False
+    if tweet_form.validate_on_submit():
+        search_text = tweet_form.search_text.data
+        user_id = x_api_provider.get_user_me(
+            access_token=access_token, access_token_secret=token_secret
+        )["id"]
+        found_tweets = x_api_provider.search_user_tweets(
+            user_id=user_id,
+            search_text=search_text,
+            access_token=access_token,
+            access_token_secret=token_secret,
+            count=tweet_count,
+        )
+        if found_tweets:
+            published = True
+    return render_template(
+        "form.html",
+        is_tweet=False,
+        is_client_api=False,
+        is_intent=False,
+        is_search=True,
+        form=tweet_form,
+        current_username=current_username,
+        published=published,
+        tweet_count=tweet_count,
+    )
 
 
 @x_api_bp.route("/tweet/<current_username>", methods=["GET", "POST"])
