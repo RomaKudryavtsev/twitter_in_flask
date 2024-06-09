@@ -7,13 +7,12 @@
 <p><b>Following Count:</b> {{ res_info["following_count"]|string }}</p>
 <p>You have <b>{{ res_info["tweet_count"]|string }}</b> tweets!</p>
 <p><a href="{{ url_for('x_api.tweet_lookup', current_username=res_info['username']) }}">Check Tweet via X API</a></p>
-<p><a
-        href="{{ url_for('client_api.tweet_lookup', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
-        Tweet via Client API</a></p>
+<p><a href="{{ url_for('client_api.tweet_lookup', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                Tweet via Client API</a></p>
 
 <p><a href="{{ url_for('x_api.user_lookup', current_username=res_info['username']) }}">Check Follows via X API</a></p>
-<p><a
-        href="{{ url_for('client_api.user_lookup', current_username=res_info['username'], following_count=res_info['following_count']) }}">Check
-        Follows via Client API</a>
+<p><a href="{{ url_for('client_api.user_lookup', current_username=res_info['username'], following_count=res_info['following_count']) }}">Check
+                Follows via Client API</a>
 </p>
+<p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a></p>
 {% endblock %}

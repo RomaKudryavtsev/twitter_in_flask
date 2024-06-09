@@ -13,6 +13,11 @@ class UserConnectionStatusForm(FlaskForm):
     submit = SubmitField("Check Target User's Status with Authed User")
 
 
+class TwitterIntentForm(FlaskForm):
+    text = StringField("Tweet Text", validators=[DataRequired()])
+    submit = SubmitField("Prepare Intent URL")
+
+
 # For cases without X API Auth
 class ClientAPITweetForm(FlaskForm):
     tweet_id = IntegerField("Tweet ID", validators=[DataRequired()])

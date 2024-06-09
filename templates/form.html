@@ -15,6 +15,21 @@
 </form>
 <p>Current User Liked: {{ liked|string }}</p>
 <p>Current User Retweeted: {{ retweeted|string }} </p>
+{% elif is_intent: %}
+<p>Ensure you are logged in to X: <a href="{{ x_login_url }}" target="_blank">{{ x_login_url }}</a></p>
+<form role="form" method="post" action="{{ url_for('intent.post_intent', current_username=current_username) }}"
+    novalidate>
+    {{ form.csrf_token }}
+    {{ form.text.label }}
+    {{ form.text }}
+    {% if form.text.errors: %}
+    <p>Required Field</p>
+    {% endif %}
+    {{ form.submit }}
+</form>
+{% if intent_url: %}
+<p><a href="{{ intent_url }}" target="_blank">{{ intent_url }}</a></p>
+{% endif %}
 {% else: %}
 <form role="form" method="post"
     action="{{ url_for('x_api.user_lookup', current_username=current_username) if not is_client_api else url_for('client_api.user_lookup', current_username=current_username, following_count=following_count) }}"
