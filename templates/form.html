@@ -27,7 +27,12 @@
     {% endif %}
     {{ form.submit }}
 </form>
-<p>Current User Published: {{ published|string }}</p>
+{% if found_tweets: %}
+<p>Found Tweets Published By User:</p>
+{% for tweet in found_tweets: %}
+<p><i>{{ tweet }}</i></p>
+{% endfor %}
+{% endif %}
 {% elif is_intent: %}
 <p>Ensure you are logged in to X: <a href="{{ x_login_url }}" target="_blank">{{ x_login_url }}</a></p>
 <form role="form" method="post" action="{{ url_for('intent.post_intent', current_username=current_username) }}"

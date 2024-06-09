@@ -72,7 +72,7 @@ class XApiProvider:
             user_auth=True,
         )
         if response and response.data:
-            return [data for data in response.data if search_text in data["text"]] or []
+            return [data["text"] for data in response.data if search_text in data["text"]] or []
         else:
             return []
 

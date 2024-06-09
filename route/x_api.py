@@ -76,7 +76,7 @@ def search_tweet(current_username):
         return redirect("/")
     tweet_count = int(request.args.get("tweet_count"))
     tweet_form = CheckTweetForm(request.form)
-    published = False
+    found_tweets = []
     if tweet_form.validate_on_submit():
         search_text = tweet_form.search_text.data
         user_id = x_api_provider.get_user_me(
@@ -89,8 +89,6 @@ def search_tweet(current_username):
             access_token_secret=token_secret,
             count=tweet_count,
         )
-        if found_tweets:
-            published = True
     return render_template(
         "form.html",
         is_tweet=False,
@@ -99,7 +97,7 @@ def search_tweet(current_username):
         is_search=True,
         form=tweet_form,
         current_username=current_username,
-        published=published,
+        found_tweets=found_tweets,
         tweet_count=tweet_count,
     )
 

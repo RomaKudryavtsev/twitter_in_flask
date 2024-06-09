@@ -10,7 +10,7 @@ def search_tweet(current_username):
     client_api_provider: ClientApiProvider = g.client_api_provider
     tweet_form = CheckTweetForm(request.form)
     tweet_count = int(request.args.get("tweet_count"))
-    published = False
+    found_tweets = []
     if tweet_form.validate_on_submit():
         search_text = tweet_form.search_text.data
         user_id = client_api_provider.get_user_info_by_screen_name(
@@ -19,8 +19,6 @@ def search_tweet(current_username):
         found_tweets = client_api_provider.search_user_tweets(
             search_text=search_text, user_id=user_id, count=tweet_count
         )
-        if found_tweets:
-            published = True
     return render_template(
         "form.html",
         is_tweet=False,
@@ -28,7 +26,7 @@ def search_tweet(current_username):
         is_client_api=True,
         is_intent=False,
         form=tweet_form,
-        published=published,
+        found_tweets=found_tweets,
         current_username=current_username,
         tweet_count=tweet_count,
     )
