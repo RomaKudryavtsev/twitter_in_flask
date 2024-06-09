@@ -9,10 +9,17 @@
     <link rel="shortcut icon" href="../static/favicon.ico" type="image/x-icon">
 </head>
 
-<body>
+<header>
     <h2>twitter_manager_py</h2>
+</header>
+
+<body>
     {% block content %}
     {% endblock %}
 </body>
+
+<footer>
+    <span><b><a href="{{ url_for('x_api.home') }}">Back Home</a></b></span>
+</footer>
 
 </html>
