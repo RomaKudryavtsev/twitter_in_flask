@@ -38,6 +38,7 @@ class ClientApiProvider:
                 id=resp.data.user.rest_id,
                 name=resp.data.user.legacy.name,
                 followers_count=resp.data.user.legacy.followers_count,
+                banner_url=resp.data.user.legacy.profile_banner_url,
             )
         )
 

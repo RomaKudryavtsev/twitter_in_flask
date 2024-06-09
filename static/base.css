@@ -8,3 +8,7 @@ body {
 footer {
     margin-top: auto;
 }
+
+img {
+    width: 200px;
+}

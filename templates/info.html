@@ -10,6 +10,10 @@
         <p><b>User ID:</b> {{ res_info["id"]|string }}</p>
     </li>
     <li>
+        <p><b>User Banner: </b></p>
+        <img src="{{ banner_url }}" alt="user-banner">
+    </li>
+    <li>
         <p><b>Followers Count:</b> {{ res_info["followers_count"]|string }}</p>
     </li>
     <li>

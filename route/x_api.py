@@ -3,7 +3,7 @@ import traceback
 from flask import Blueprint, g, request, session, render_template, redirect
 from tweepy import TweepyException
 from config import config
-from twitter_provider import XApiAuthHandler, XApiProvider
+from twitter_provider import XApiAuthHandler, XApiProvider, ClientApiProvider
 from form import TweetSearchForm, UserConnectionStatusForm, CheckTweetForm
 
 x_api_bp = Blueprint("x_api", __name__)
@@ -47,6 +47,24 @@ def callback_url():
         logging.warning(traceback.format_exc())
         logging.warning(str(e))
         return redirect("/")
+
+
+@x_api_bp.route("/info")
+def info():
+    access_token = session.get("access_token")
+    token_secret = session.get("token_secret")
+    if not access_token or not token_secret:
+        return redirect("/")
+    x_api_provider: XApiProvider = g.x_api_provider
+    client_api_provider: ClientApiProvider = g.client_api_provider
+    res_info = x_api_provider.get_user_me(
+        access_token=access_token,
+        access_token_secret=token_secret,
+    )
+    banner_url = client_api_provider.get_user_info_by_screen_name(
+        screen_name=res_info["username"]
+    )["banner_url"]
+    return render_template("info.html", res_info=res_info, banner_url=banner_url)
 
 
 @x_api_bp.route("/search/<current_username>", methods=["GET", "POST"])
@@ -150,17 +168,3 @@ def user_lookup(current_username):
         connection_status=connection_status,
         current_username=current_username,
     )
-
-
-@x_api_bp.route("/info")
-def info():
-    access_token = session.get("access_token")
-    token_secret = session.get("token_secret")
-    if not access_token or not token_secret:
-        return redirect("/")
-    x_api_provider: XApiProvider = g.x_api_provider
-    res_info = x_api_provider.get_user_me(
-        access_token=access_token,
-        access_token_secret=token_secret,
-    )
-    return render_template("info.html", res_info=res_info)

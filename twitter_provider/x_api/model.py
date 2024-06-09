@@ -9,3 +9,4 @@ class XUserInfo:
     followers_count: int
     tweet_count: int
     following_count: int | None = None
+    banner_url: str | None = None
