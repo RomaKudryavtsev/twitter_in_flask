@@ -20,7 +20,6 @@ def home():
             consumer_api_secret=config.CONSUMER_API_SECRET,
             callback_url=config.CALLBACK_URL,
         )
-        auth_url = x_auth_handler.get_user_auth_url()
         redirect("/")
     return render_template("index.html", auth_url=auth_url)
 
