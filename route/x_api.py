@@ -1,4 +1,5 @@
 import logging
+import traceback
 from flask import Blueprint, g, request, session, render_template, redirect
 from tweepy import TweepyException
 from config import config
@@ -42,6 +43,7 @@ def callback_url():
         session["token_secret"] = access_token_secret
         return render_template("authed.html", res=res)
     except Exception as e:
+        logging.warning(traceback.format_exc())
         logging.warning(str(e))
         return redirect("/")
 
@@ -63,18 +65,17 @@ def tweet_lookup(current_username):
             access_token=access_token,
             access_token_secret=token_secret,
         )
-        if current_username in liking_usernames:
-            liked = True
+        liked = current_username in liking_usernames
         retweeters_usernames = x_api_provider.get_tweet_retweets(
             tweet_id=tweet_id,
             access_token=access_token,
             access_token_secret=token_secret,
         )
-        if current_username in retweeters_usernames:
-            retweeted = True
+        retweeted = current_username in retweeters_usernames
     return render_template(
         "form.html",
         is_tweet=True,
+        is_clinet_api=False,
         form=tweet_form,
         current_username=current_username,
         liked=liked,
@@ -102,6 +103,7 @@ def user_lookup(current_username):
     return render_template(
         "form.html",
         is_tweet=False,
+        is_client_api=False,
         form=user_form,
         connection_status=connection_status,
         current_username=current_username,

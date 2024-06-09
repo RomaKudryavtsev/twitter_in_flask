@@ -1,6 +1,8 @@
 # twitter_manager_py
 
-Simple example demonstrating X's 3-legged OAuth authentication with Flask
+Flask App demonstrating:
+1) X's 3-legged OAuth authentication with Flask
+2) Usage of X API and Twitter Client API
 
 ## Configuration Steps
 - Create new project and app via X Developer Portal.

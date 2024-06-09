@@ -10,7 +10,7 @@ from .model import ClientUserInfo
 
 
 class ClientApiProvider:
-    def __init__(self, screen_name: str, screen_pwd: str, default_count: int = 1000):
+    def __init__(self, screen_name: str, screen_pwd: str, default_count: int = 100):
         cookies_dict = dict()
         if Path("cookie.json").exists():
             with open("cookie.json", "r") as f:
@@ -41,9 +41,9 @@ class ClientApiProvider:
             )
         )
 
-    def get_user_following(self, target_screen_name: str, count: int | None):
+    def get_user_following(self, current_screen_name: str, count: int | None):
         target_user_id = self.get_user_info_by_screen_name(
-            screen_name=target_screen_name
+            screen_name=current_screen_name
         )["id"]
         resp = self.user_list_api.get_following(
             user_id=target_user_id, count=count or self.default_count
@@ -64,9 +64,9 @@ class ClientApiProvider:
             liked_tweets.append(tweet_data.tweet.rest_id)
         return liked_tweets
 
-    def get_user_retweets(self, user_id: str):
+    def get_user_retweets(self, user_id: str, count: int | None):
         resp = self.tweet_api.get_user_tweets_and_replies(
-            user_id=user_id, count=self.default_count
+            user_id=user_id, count=count or self.default_count
         )
         tweets_data = resp.data.data
         retweeted = []
