@@ -14,6 +14,10 @@
         <img src="{{ banner_url }}" alt="user-banner">
     </li>
     <li>
+        <p><b>Profile Image: </b></p>
+        <img src="{{ res_info['profile_image_url'] }}" alt="user-profile-img">
+    </li>
+    <li>
         <p><b>Followers Count:</b> {{ res_info["followers_count"]|string }}</p>
     </li>
     <li>
@@ -45,10 +49,6 @@
         </p>
     </li>
     <li>
-        <p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a>
-        </p>
-    </li>
-    <li>
         <p><a
                 href="{{ url_for('x_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
                 if Tweet is Published via X API</a></p>
@@ -58,6 +58,10 @@
             <a
                 href="{{ url_for('client_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
                 if Tweet is Published via Client API</a>
+        </p>
+    </li>
+    <li>
+        <p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a>
         </p>
     </li>
 </ul>

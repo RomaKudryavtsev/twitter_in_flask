@@ -21,7 +21,9 @@ class XApiProvider:
 
     def get_user_me(self, access_token: str, access_token_secret: str):
         client = self._get_client(access_token, access_token_secret)
-        response: Response = client.get_me(user_fields=["public_metrics"])
+        response: Response = client.get_me(
+            user_fields=["public_metrics", "profile_image_url"]
+        )
         response_data = response.data
         return asdict(
             XUserInfo(
@@ -31,6 +33,7 @@ class XApiProvider:
                 followers_count=response_data["public_metrics"]["followers_count"],
                 following_count=response_data["public_metrics"]["following_count"],
                 tweet_count=response_data["public_metrics"]["tweet_count"],
+                profile_image_url=response_data["profile_image_url"],
             )
         )
 
