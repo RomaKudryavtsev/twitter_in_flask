@@ -12,3 +12,21 @@ footer {
 img {
     width: 200px;
 }
+
+.info-wrapper {
+    display: flex;
+}
+
+.options {
+    margin-left: 50px;
+}
+
+@media (max-width: 1000px) {
+    .info-wrapper {
+        flex-direction: column;
+    }
+
+    .options {
+        margin-left: 0;
+    }
+}

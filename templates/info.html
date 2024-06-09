@@ -1,68 +1,74 @@
 {% extends "_base.html"%}
 {% block content%}
-<h3>Authenticated User Info</h3>
 <p>Hello, <b>{{ res_info["name"] }}</b>! Thank you for authorization!</p>
-<ul>
-    <li>
-        <p><b>Screen Name:</b> {{ res_info["username"] }}</p>
-    </li>
-    <li>
-        <p><b>User ID:</b> {{ res_info["id"]|string }}</p>
-    </li>
-    <li>
-        <p><b>User Banner: </b></p>
-        <img src="{{ banner_url }}" alt="user-banner">
-    </li>
-    <li>
-        <p><b>Profile Image: </b></p>
-        <img src="{{ res_info['profile_image_url'] }}" alt="user-profile-img">
-    </li>
-    <li>
-        <p><b>Followers Count:</b> {{ res_info["followers_count"]|string }}</p>
-    </li>
-    <li>
-        <p><b>Following Count:</b> {{ res_info["following_count"]|string }}</p>
-    </li>
-    <li>
-        <p>You have <b>{{ res_info["tweet_count"]|string }}</b> tweets!</p>
-    </li>
-</ul>
-<h3>Here is how I can help you:</h3>
-<ul>
-    <li>
-        <p><a href="{{ url_for('x_api.tweet_lookup', current_username=res_info['username']) }}">Check Tweet via X
-                API</a></p>
-    </li>
-    <li>
-        <p><a
-                href="{{ url_for('client_api.tweet_lookup', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
-                Tweet via Client API</a></p>
-    </li>
-    <li>
-        <p><a href="{{ url_for('x_api.user_lookup', current_username=res_info['username']) }}">Check Follows via X
-                API</a></p>
-    </li>
-    <li>
-        <p><a
-                href="{{ url_for('client_api.user_lookup', current_username=res_info['username'], following_count=res_info['following_count']) }}">Check
-                Follows via Client API</a>
-        </p>
-    </li>
-    <li>
-        <p><a
-                href="{{ url_for('x_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
-                if Tweet is Published via X API</a></p>
-    </li>
-    <li>
-        <p>
-            <a
-                href="{{ url_for('client_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
-                if Tweet is Published via Client API</a>
-        </p>
-    </li>
-    <li>
-        <p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a>
-        </p>
-    </li>
-</ul>
+<div class="info-wrapper">
+    <div class="user-info">
+        <h3>Authenticated User Info:</h3>
+        <ul>
+            <li>
+                <p><b>Screen Name:</b> {{ res_info["username"] }}</p>
+            </li>
+            <li>
+                <p><b>User ID:</b> {{ res_info["id"]|string }}</p>
+            </li>
+            <li>
+                <p><b>User Banner: </b></p>
+                <img src="{{ banner_url }}" alt="user-banner">
+            </li>
+            <li>
+                <p><b>Profile Image: </b></p>
+                <img src="{{ res_info['profile_image_url'] }}" alt="user-profile-img">
+            </li>
+            <li>
+                <p><b>Followers Count:</b> {{ res_info["followers_count"]|string }}</p>
+            </li>
+            <li>
+                <p><b>Following Count:</b> {{ res_info["following_count"]|string }}</p>
+            </li>
+            <li>
+                <p>You have <b>{{ res_info["tweet_count"]|string }}</b> tweets!</p>
+            </li>
+        </ul>
+    </div>
+    <div class="options">
+        <h3>Here is how I can help you:</h3>
+        <ul>
+            <li>
+                <p><a href="{{ url_for('x_api.tweet_lookup', current_username=res_info['username']) }}">Check Tweet via X
+                        API</a></p>
+            </li>
+            <li>
+                <p><a
+                        href="{{ url_for('client_api.tweet_lookup', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                        Tweet via Client API</a></p>
+            </li>
+            <li>
+                <p><a href="{{ url_for('x_api.user_lookup', current_username=res_info['username']) }}">Check Follows via X
+                        API</a></p>
+            </li>
+            <li>
+                <p><a
+                        href="{{ url_for('client_api.user_lookup', current_username=res_info['username'], following_count=res_info['following_count']) }}">Check
+                        Follows via Client API</a>
+                </p>
+            </li>
+            <li>
+                <p><a
+                        href="{{ url_for('x_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                        if Tweet is Published via X API</a></p>
+            </li>
+            <li>
+                <p>
+                    <a
+                        href="{{ url_for('client_api.search_tweet', current_username=res_info['username'], tweet_count=res_info['tweet_count']) }}">Check
+                        if Tweet is Published via Client API</a>
+                </p>
+            </li>
+            <li>
+                <p><a href="{{ url_for('intent.post_intent', current_username=res_info['username']) }}">Create Tweet Intent</a>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 {% endblock %}
