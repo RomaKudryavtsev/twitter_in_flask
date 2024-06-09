@@ -21,6 +21,7 @@ def post_intent(current_username):
         "form.html",
         is_tweet=False,
         is_intent=True,
+        is_search=False,
         intent_url=intent_url,
         x_login_url=X_LOGIN_URL,
         form=intent_form,

@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 {% block content %}
-<h3>Current User: {{ current_username }}</h3>
+<h3>Current User Screen Name: {{ current_username }}</h3>
 {% if is_tweet: %}
 <form role="form" method="post"
     action="{{ url_for('x_api.tweet_lookup', current_username=current_username) if not is_client_api else url_for('client_api.tweet_lookup', current_username=current_username, tweet_count=tweet_count) }}"

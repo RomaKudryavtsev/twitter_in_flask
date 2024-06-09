@@ -18,6 +18,11 @@ class TwitterIntentForm(FlaskForm):
     submit = SubmitField("Prepare Intent URL")
 
 
+class CheckTweetForm(FlaskForm):
+    search_text = StringField("Tweet Text", validators=[DataRequired()])
+    submit = SubmitField("Check if the Authed User Published Tweet")
+
+
 # For cases without X API Auth
 class ClientAPITweetForm(FlaskForm):
     tweet_id = IntegerField("Tweet ID", validators=[DataRequired()])

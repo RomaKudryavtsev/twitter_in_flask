@@ -20,6 +20,7 @@ def home():
             consumer_api_secret=config.CONSUMER_API_SECRET,
             callback_url=config.CALLBACK_URL,
         )
+        auth_url = x_auth_handler.get_user_auth_url()
         redirect("/")
     return render_template("index.html", auth_url=auth_url)
 
@@ -77,6 +78,7 @@ def tweet_lookup(current_username):
         is_tweet=True,
         is_clinet_api=False,
         is_intent=False,
+        is_search=False,
         form=tweet_form,
         current_username=current_username,
         liked=liked,
@@ -106,6 +108,7 @@ def user_lookup(current_username):
         is_tweet=False,
         is_client_api=False,
         is_intent=False,
+        is_search=False,
         form=user_form,
         connection_status=connection_status,
         current_username=current_username,

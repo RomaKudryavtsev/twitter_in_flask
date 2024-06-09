@@ -30,6 +30,7 @@ def tweet_lookup(current_username):
     return render_template(
         "form.html",
         is_tweet=True,
+        is_search=False,
         is_client_api=True,
         is_intent=False,
         form=tweet_form,
@@ -56,6 +57,7 @@ def user_lookup(current_username):
     return render_template(
         "form.html",
         is_tweet=False,
+        is_search=False,
         is_client_api=True,
         is_intent=False,
         form=user_form,

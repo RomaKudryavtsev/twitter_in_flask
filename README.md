@@ -3,6 +3,7 @@
 Flask App demonstrating:
 1) X's 3-legged OAuth authentication with Flask
 2) Usage of X API and Twitter Client API
+3) Usage of Web Intents
 
 ## Configuration Steps
 - Create new project and app via X Developer Portal.
