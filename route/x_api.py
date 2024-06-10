@@ -3,7 +3,7 @@ import traceback
 from flask import Blueprint, g, request, session, render_template, redirect
 from tweepy import TweepyException
 from config import config
-from twitter_provider import XApiAuthHandler, XApiProvider, ClientApiProvider
+from twitter_provider import XApiAuthHandler, XApiProvider, ClientAPIProviderManager
 from form import TweetSearchForm, UserConnectionStatusForm, CheckTweetForm
 
 x_api_bp = Blueprint("x_api", __name__)
@@ -12,6 +12,7 @@ x_api_bp = Blueprint("x_api", __name__)
 @x_api_bp.route("/")
 def home():
     x_auth_handler = g.x_auth_handler
+    auth_url = ""
     try:
         auth_url = x_auth_handler.get_user_auth_url()
     except TweepyException:
@@ -55,13 +56,14 @@ def info():
     if not access_token or not token_secret:
         return redirect("/")
     x_api_provider: XApiProvider = g.x_api_provider
-    client_api_provider: ClientApiProvider = g.client_api_provider
+    client_manager: ClientAPIProviderManager = g.client_api_manager
     res_info = x_api_provider.get_user_me(
         access_token=access_token,
         access_token_secret=token_secret,
     )
-    banner_url = client_api_provider.get_user_info_by_screen_name(
-        screen_name=res_info["username"]
+    banner_url = client_manager.execute_w_retry(
+        "get_user_info_by_screen_name",
+        screen_name=res_info["username"],
     )["banner_url"]
     return render_template("info.html", res_info=res_info, banner_url=banner_url)
 
