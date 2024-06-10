@@ -2,7 +2,7 @@
 
 Flask App demonstrating:
 1) X's 3-legged OAuth authentication with Flask
-2) Usage of X API and Twitter Client API
+2) Usage of X API and Twitter Client API (via a number of provider instances)
 3) Usage of Web Intents
 
 ## Configuration Steps
@@ -19,4 +19,5 @@ Flask App demonstrating:
 - Based on the **user's** *access_token* and *access_secret*, **TwitterApiProvider** is able to retrieve data via X API.
 
 ## Running locally
-Use `python app.py`
+1) Create file *provider_workers.csv* in project root with screen names and passwords for Client API.
+2) Run `python app.py`
