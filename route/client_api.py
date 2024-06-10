@@ -1,4 +1,6 @@
-from flask import Blueprint, g, request, render_template
+import logging
+import traceback
+from flask import Blueprint, g, request, render_template, abort
 from twitter_provider import ClientAPIProviderManager
 from form import TweetSearchForm, UserConnectionStatusForm, CheckTweetForm
 
@@ -20,12 +22,17 @@ def search_tweet(current_username):
     if tweet_form.validate_on_submit():
         search_text = tweet_form.search_text.data
         user_id = get_user_id(client_manager, current_username)
-        found_tweets = client_manager.execute_w_retry(
-            "search_user_tweets",
-            search_text=search_text,
-            user_id=user_id,
-            count=tweet_count,
-        )
+        try:
+            found_tweets = client_manager.execute_w_retry(
+                "search_user_tweets",
+                search_text=search_text,
+                user_id=user_id,
+                count=tweet_count,
+            )
+        except RuntimeError as e:
+            logging.error(e)
+            logging.warning(traceback.format_exc())
+            abort(400)
     return render_template(
         "form.html",
         is_tweet=False,
@@ -49,18 +56,23 @@ def tweet_lookup(current_username):
     if tweet_form.validate_on_submit():
         tweet_id = tweet_form.tweet_id.data
         user_id = get_user_id(client_manager, current_username)
-        user_likes = client_manager.execute_w_retry(
-            "get_user_likes",
-            count=tweet_count,
-            user_id=user_id,
-        )
-        liked = str(tweet_id) in user_likes
-        user_retweets = client_manager.execute_w_retry(
-            "get_user_retweets",
-            count=tweet_count,
-            user_id=user_id,
-        )
-        retweeted = str(tweet_id) in user_retweets
+        try:
+            user_likes = client_manager.execute_w_retry(
+                "get_user_likes",
+                count=tweet_count,
+                user_id=user_id,
+            )
+            liked = str(tweet_id) in user_likes
+            user_retweets = client_manager.execute_w_retry(
+                "get_user_retweets",
+                count=tweet_count,
+                user_id=user_id,
+            )
+            retweeted = str(tweet_id) in user_retweets
+        except RuntimeError as e:
+            logging.error(e)
+            logging.warning(traceback.format_exc())
+            abort(400)
     return render_template(
         "form.html",
         is_tweet=True,
@@ -83,12 +95,17 @@ def user_lookup(current_username):
     connection_status = False
     if user_form.validate_on_submit():
         target_username = user_form.username.data
-        following = client_manager.execute_w_retry(
-            "get_user_following",
-            count=following_count,
-            current_screen_name=current_username,
-        )
-        connection_status = target_username in following
+        try:
+            following = client_manager.execute_w_retry(
+                "get_user_following",
+                count=following_count,
+                current_screen_name=current_username,
+            )
+            connection_status = target_username in following
+        except RuntimeError as e:
+            logging.error(e)
+            logging.warning(traceback.format_exc())
+            abort(400)
     return render_template(
         "form.html",
         is_tweet=False,

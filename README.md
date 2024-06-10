@@ -15,7 +15,7 @@ Flask App demonstrating:
 ## Authentication Process
 - When user visits home page, **TwitterAuthHandler** will provide an active authentication url to X UI.
 - User visits the url and authorizes the app to read data from his X Account.
-- User is redirected to the app's callback url. At this moment the app receives in request params *oauth_token* and *oauth_verifier*. Based on these, **TwitterAuthHandler** will collect the **user's** *access_token* and *access_secret*, which can be stored for further requests to X API (in the example they are stored in Flask's session).
+- User is redirected to the app's callback url. At this moment the app receives in request params *oauth_token* and *oauth_verifier*. Based on these, **TwitterAuthHandler** will collect the **user's** *access_token* and *access_secret*, which can be stored for further requests to X API (in the example they are stored in Flask's session and local SQLite database).
 - Based on the **user's** *access_token* and *access_secret*, **TwitterApiProvider** is able to retrieve data via X API.
 
 ## Running locally
@@ -26,3 +26,7 @@ Flask App demonstrating:
 2) Run `python app.py`
 
 *NB:* After project first start - *cookie_<screen_name>.json* files will be created in root directory (theses files are responsible for storing cookies for Client API providers sessions)
+
+## Notes re User's Tokens
+- From description of OAuth Process regarding user's tokens: <cite>You will use this to obtain the permanent access token for this user and store it locally.</cite> (https://developer.x.com/en/docs/authentication/oauth-1-0a/obtaining-user-access-tokens)
+- From Supabase Dev: <cite>...the tokens never expire unless a user revokes them</cite> (https://github.com/orgs/supabase/discussions/2961)

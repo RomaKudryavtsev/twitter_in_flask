@@ -6,8 +6,8 @@ from twitter_provider import (
     XApiProvider,
     ClientAPIProviderManager,
 )
+import db as repo
 
-# TODO - to figure out whether user's access_token & access_token_secret are permanent (if yes, add simple sqlite3 demo for users)
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET
 app.static_folder = "./static"
@@ -36,4 +36,5 @@ def before_request():
 
 
 if __name__ == "__main__":
+    repo.prepare_db()
     app.run(debug=True)

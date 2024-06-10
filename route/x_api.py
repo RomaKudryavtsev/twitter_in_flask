@@ -5,6 +5,7 @@ from tweepy import TweepyException
 from config import config
 from twitter_provider import XApiAuthHandler, XApiProvider, ClientAPIProviderManager
 from form import TweetSearchForm, UserConnectionStatusForm, CheckTweetForm
+import db as repo
 
 x_api_bp = Blueprint("x_api", __name__)
 
@@ -51,12 +52,12 @@ def callback_url():
 
 @x_api_bp.route("/info")
 def info():
+    x_api_provider: XApiProvider = g.x_api_provider
+    client_manager: ClientAPIProviderManager = g.client_api_manager
     access_token = session.get("access_token")
     token_secret = session.get("token_secret")
     if not access_token or not token_secret:
         return redirect("/")
-    x_api_provider: XApiProvider = g.x_api_provider
-    client_manager: ClientAPIProviderManager = g.client_api_manager
     res_info = x_api_provider.get_user_me(
         access_token=access_token,
         access_token_secret=token_secret,
@@ -65,14 +66,25 @@ def info():
         "get_user_info_by_screen_name",
         screen_name=res_info["username"],
     )["banner_url"]
+    persisted_user = repo.get_user_by_screen_name(res_info["username"])
+    if not persisted_user:
+        repo.add_user(
+            id=res_info["id"],
+            screen_name=res_info["username"],
+            access_token=access_token,
+            token_secret=token_secret,
+        )
     return render_template("info.html", res_info=res_info, banner_url=banner_url)
 
 
 @x_api_bp.route("/search/<current_username>", methods=["GET", "POST"])
 def search_tweet(current_username):
-    access_token = session.get("access_token")
-    token_secret = session.get("token_secret")
     x_api_provider: XApiProvider = g.x_api_provider
+    persisted_user = repo.get_user_by_screen_name(current_username)
+    if not persisted_user:
+        return redirect("/")
+    access_token = session.get("access_token") or persisted_user["access_token"]
+    token_secret = session.get("token_secret") or persisted_user["token_secret"]
     if not access_token or not token_secret:
         return redirect("/")
     tweet_count = int(request.args.get("tweet_count"))
@@ -105,9 +117,12 @@ def search_tweet(current_username):
 
 @x_api_bp.route("/tweet/<current_username>", methods=["GET", "POST"])
 def tweet_lookup(current_username):
-    access_token = session.get("access_token")
-    token_secret = session.get("token_secret")
     x_api_provider: XApiProvider = g.x_api_provider
+    persisted_user = repo.get_user_by_screen_name(current_username)
+    if not persisted_user:
+        return redirect("/")
+    access_token = session.get("access_token") or persisted_user["access_token"]
+    token_secret = session.get("token_secret") or persisted_user["token_secret"]
     if not access_token or not token_secret:
         return redirect("/")
     tweet_form = TweetSearchForm(request.form)
@@ -142,9 +157,12 @@ def tweet_lookup(current_username):
 
 @x_api_bp.route("/follow/<current_username>", methods=["GET", "POST"])
 def user_lookup(current_username):
-    access_token = session.get("access_token")
-    token_secret = session.get("token_secret")
     x_api_provider: XApiProvider = g.x_api_provider
+    persisted_user = repo.get_user_by_screen_name(current_username)
+    if not persisted_user:
+        return redirect("/")
+    access_token = session.get("access_token") or persisted_user["access_token"]
+    token_secret = session.get("token_secret") or persisted_user["token_secret"]
     if not access_token or not token_secret:
         return redirect("/")
     user_form = UserConnectionStatusForm(request.form)

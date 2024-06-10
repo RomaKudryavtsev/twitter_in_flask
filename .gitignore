@@ -3,3 +3,4 @@ __pycache__
 .env
 *.json
 provider_workers.csv
+*.db
