@@ -1,5 +1,6 @@
 import csv
 import time
+import logging
 from threading import Lock
 from .client_api import ClientApiProvider
 from .util import get_proxy_url, ProviderInitData
@@ -31,6 +32,7 @@ class ClientAPIProviderManager:
                     available_provider = provider
                     break
             time.sleep(0.4)
+        logging.warning(f"PROVIDER LAUNCHED: {available_provider.screen_name}")
         return available_provider
 
     def _release_provider(self, screen_name):
@@ -38,6 +40,7 @@ class ClientAPIProviderManager:
             if provider.screen_name == screen_name:
                 if lock.locked():
                     lock.release()
+                    logging.warning(f"PROVIDER RELEASED: {screen_name}")
                 return
 
     def execute_w_retry(self, attr, **params):
@@ -46,15 +49,16 @@ class ClientAPIProviderManager:
         func = getattr(provider, attr)
         result = None
         tries = 0
-        while not result:
+        while result is None:
             if tries >= self.retries_num:
-                raise RuntimeError("Unable to retrieve data via Client API")
-            try:
-                result = func(**params)
-            finally:
-                tries += 1
                 self._release_provider(provider_name)
-            if not result:
+                raise RuntimeError("Unable to retrieve data via Client API")
+            result = func(**params)
+            tries += 1
+            if result is None:
+                curr_provider_name = provider_name
                 provider = self._get_provider()
                 provider_name = provider.screen_name
+                self._release_provider(curr_provider_name)
+        self._release_provider(provider_name)
         return result

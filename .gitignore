@@ -4,3 +4,4 @@ __pycache__
 *.json
 provider_workers.csv
 *.db
+.vscode

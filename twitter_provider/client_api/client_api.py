@@ -45,7 +45,6 @@ class ClientApiProvider:
 
     def get_user_info_by_screen_name(self, screen_name: str):
         try:
-            logging.warning(f"WORKER: {self.screen_name}")
             resp = self._user_api.get_user_by_screen_name(screen_name=screen_name)
             return asdict(
                 ClientUserInfo(
