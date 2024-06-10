@@ -19,5 +19,10 @@ Flask App demonstrating:
 - Based on the **user's** *access_token* and *access_secret*, **TwitterApiProvider** is able to retrieve data via X API.
 
 ## Running locally
-1) Create file *provider_workers.csv* in project root with screen names and passwords for Client API.
+1) Create file *provider_workers.csv* in project root with screen names, passwords, proxy IP and proxy ports for Client API.
+
+*Example:* `x_screen_name,x_screen_pwd,proxy_ip,proxy_port`
+
 2) Run `python app.py`
+
+*NB:* After project first start - *cookie_<screen_name>.json* files will be created in root directory (theses files are responsible for storing cookies for Client API providers sessions)

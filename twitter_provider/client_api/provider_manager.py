@@ -2,19 +2,25 @@ import csv
 import time
 from threading import Lock
 from .client_api import ClientApiProvider
+from .util import get_proxy_url, ProviderInitData
 
 
 class ClientAPIProviderManager:
     def __init__(self, retries_num: int = 5):
-        creds_map = {}
+        init_providers: list[ClientApiProvider] = []
         with open("provider_workers.csv", newline="") as workers_creds:
             reader = csv.reader(workers_creds, delimiter=",")
             for row in reader:
-                creds_map[row[0]] = row[1]
-        self.providers = {
-            ClientApiProvider(screen_name=name, screen_pwd=pwd): Lock()
-            for (name, pwd) in creds_map.items()
-        }
+                init_providers.append(
+                    ClientApiProvider(
+                        init_data=ProviderInitData(
+                            screen_name=row[0],
+                            screen_pwd=row[1],
+                            proxy_url=get_proxy_url(row[2], row[3]),
+                        )
+                    )
+                )
+        self.providers = {provider: Lock() for provider in init_providers}
         self.retries_num = retries_num
 
     def _get_provider(self):
@@ -41,7 +47,7 @@ class ClientAPIProviderManager:
         result = None
         tries = 0
         while not result:
-            if self.retries_num == tries:
+            if tries >= self.retries_num:
                 raise RuntimeError("Unable to retrieve data via Client API")
             try:
                 result = func(**params)

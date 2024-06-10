@@ -11,9 +11,6 @@ class Config:
     CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
     CONSUMER_API_KEY = os.environ.get("CONSUMER_API_KEY")
     CONSUMER_API_SECRET = os.environ.get("CONSUMER_API_SECRET")
-    # Below data is required for Client API
-    SCREEN_NAME = os.environ.get("SCREEN_NAME")
-    SCREEN_PWD = os.environ.get("SCREEN_PWD")
     # This is for Flask only
     APP_SECRET = os.environ.get("INTERNAL_APP_SECRET")
 

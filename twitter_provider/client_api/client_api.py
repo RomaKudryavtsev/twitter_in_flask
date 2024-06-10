@@ -8,35 +8,45 @@ from twitter_openapi_python import (
 from pathlib import Path
 from dataclasses import asdict
 from .model import ClientUserInfo
+from .util import ProviderInitData
 
 
 class ClientApiProvider:
-    def __init__(self, screen_name: str, screen_pwd: str, default_count: int = 100):
+    def __init__(
+        self,
+        init_data: ProviderInitData,
+        default_count: int = 100,
+    ):
         cookies_dict = dict()
-        if Path("cookie.json").exists():
-            with open("cookie.json", "r") as f:
+        if Path(f"cookie_{init_data.screen_name}.json").exists():
+            with open(f"cookie_{init_data.screen_name}.json", "r") as f:
                 cookies_dict = json.load(f)
         else:
             auth_handler = CookieSessionUserHandler(
-                screen_name=screen_name,
-                password=screen_pwd,
+                screen_name=init_data.screen_name,
+                password=init_data.screen_pwd,
             )
             cookies_dict = auth_handler.get_cookies().get_dict()
-            with open("cookie.json", "w") as f:
+            with open(f"cookie_{init_data.screen_name}.json", "w") as f:
                 f.write(json.dumps(cookies_dict))
         client_api = TwitterOpenapiPython().get_client_from_cookies(
             cookies=cookies_dict
         )
-        self.user_api = client_api.get_user_api()
-        self.user_list_api = client_api.get_user_list_api()
-        self.tweet_api = client_api.get_tweet_api()
+        if init_data.proxy_url:
+            client_api.api.configuration.proxy = init_data.proxy_url
+            client_api.api.configuration.proxy_headers = {}
+        self._user_api = client_api.get_user_api()
+        self._user_list_api = client_api.get_user_list_api()
+        self._tweet_api = client_api.get_tweet_api()
         self.default_count = default_count
-        self.screen_name = screen_name
+        self.screen_name = init_data.screen_name
+        self._proxy = init_data.proxy_url
+        logging.warning(f"PROXY: {self._proxy}")
 
     def get_user_info_by_screen_name(self, screen_name: str):
         try:
             logging.warning(f"WORKER: {self.screen_name}")
-            resp = self.user_api.get_user_by_screen_name(screen_name=screen_name)
+            resp = self._user_api.get_user_by_screen_name(screen_name=screen_name)
             return asdict(
                 ClientUserInfo(
                     id=resp.data.user.rest_id,
@@ -54,7 +64,7 @@ class ClientApiProvider:
             target_user_id = self.get_user_info_by_screen_name(
                 screen_name=current_screen_name
             )["id"]
-            resp = self.user_list_api.get_following(
+            resp = self._user_list_api.get_following(
                 user_id=target_user_id, count=count or self.default_count
             )
             users_data = resp.data.data
@@ -70,7 +80,7 @@ class ClientApiProvider:
         self, search_text: str, user_id: str, count: int | None = None
     ):
         try:
-            resp = self.tweet_api.get_user_tweets(
+            resp = self._tweet_api.get_user_tweets(
                 user_id=user_id, count=count or self.default_count
             )
             tweets_data = resp.data.data
@@ -85,7 +95,7 @@ class ClientApiProvider:
 
     def get_user_likes(self, user_id: str, count: int | None = None):
         try:
-            resp = self.tweet_api.get_likes(
+            resp = self._tweet_api.get_likes(
                 user_id=user_id, count=count or self.default_count
             )
             tweets_data = resp.data.data
@@ -99,7 +109,7 @@ class ClientApiProvider:
 
     def get_user_retweets(self, user_id: str, count: int | None = None):
         try:
-            resp = self.tweet_api.get_user_tweets_and_replies(
+            resp = self._tweet_api.get_user_tweets_and_replies(
                 user_id=user_id, count=count or self.default_count
             )
             tweets_data = resp.data.data
