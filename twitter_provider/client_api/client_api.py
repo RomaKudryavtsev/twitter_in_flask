@@ -78,7 +78,7 @@ class ClientApiProvider:
             liked_tweets.append(tweet_data.tweet.rest_id)
         return liked_tweets
 
-    def get_user_retweets(self, user_id: str, count: int | None):
+    def get_user_retweets(self, user_id: str, count: int | None = None):
         resp = self.tweet_api.get_user_tweets_and_replies(
             user_id=user_id, count=count or self.default_count
         )

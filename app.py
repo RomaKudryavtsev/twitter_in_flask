@@ -3,6 +3,8 @@ from config import config
 from route import x_api_bp, client_api_bp, intent_bp
 from twitter_provider import XApiAuthHandler, XApiProvider, ClientApiProvider
 
+# TODO - to figure out whether user's access_token & access_token_secret are permanent (if yes, add simple sqlite3 demo for users)
+# TODO - add executor utility to manage multiple instances of client_api_provider
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET
 app.static_folder = "./static"

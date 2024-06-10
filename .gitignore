@@ -2,3 +2,4 @@
 __pycache__
 .env
 cookie.json
+provider_workers.csv

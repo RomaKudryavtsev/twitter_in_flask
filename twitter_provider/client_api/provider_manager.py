@@ -1,0 +1,2 @@
+class ClientAPIProviderManager:
+    pass
